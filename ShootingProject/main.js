@@ -19,7 +19,9 @@ let spaceSpeed = 2;
 
 let gameover = false;
 let score = 0;
+let highScore = 0;
 
+let scoreData = [];
 let bulletList = [];
 
 class Bullet {
@@ -98,6 +100,9 @@ function setupKeyboardListener() {
         if (event.key == " ") {
             createBullet();
         }
+        if (event.key == "r") {
+            RestartGame();
+        }
     });
 }
 
@@ -110,6 +115,34 @@ function createEnemy() {
         let enemy = new Enemy();
     }, 1000);
 }
+
+function RestartGame() {
+    LoadScore();
+
+    score = 0;
+    enemyList = [];
+    bulletList = [];
+    spaceshipX = canvas.width / 2 - 32;
+    spaceshipY = canvas.height - 64;
+
+    gameover = false;
+    main();
+}
+
+function SaveScore() {
+    let jsonString = localStorage.getItem("HighScore");
+    if (jsonString < score)
+        localStorage.setItem("HighScore", JSON.stringify(score));
+}
+
+function LoadScore() {
+    let jsonString = localStorage.getItem("HighScore");
+    if (jsonString != null) {
+        scoreData = JSON.parse(jsonString);
+        highScore = scoreData;
+    }
+}
+
 
 function update() {
     if ("a" in keysDown || "ArrowLeft" in keysDown) {
@@ -144,8 +177,9 @@ function render() {
     ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
     ctx.drawImage(spaceshipImg, spaceshipX, spaceshipY);
     ctx.fillText(`SCORE : ${score}`, 20, 40);
+    ctx.fillText(`HIGH : ${highScore}`, 250, 40);
     ctx.fillStyle = "White";
-    ctx.font="20px Arial";
+    ctx.font = "20px Arial";
     for (let i = 0; i < bulletList.length; i++) {
         if (bulletList[i].alive)
             ctx.drawImage(bulletImg, bulletList[i].x + 10, bulletList[i].y);
@@ -161,11 +195,16 @@ function main() {
         render();
         requestAnimationFrame(main);
     }
-    else
+    else {
         ctx.drawImage(gameoverImg, 10, 100, 380, 380);
+        ctx.fillText("PRESS R TO RESTART", 100, 500);
+        ctx.font = "45px Arial";
+        SaveScore();
+    }
 }
 
 loadImage();
+LoadScore();
 setupKeyboardListener();
 createEnemy();
 main();
