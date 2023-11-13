@@ -1,13 +1,47 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
- <meta charset="UTF-8">
- <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이벤트 위임(delegation)</title>
 </head>
+
 <body>
- <script src="Basic/Basic.js">
-   //  alert("Hello World");
- //이곳에 자바스크립트 코드를 넣으면서 실습하세요
- </script>
+  <div id="form">
+    <input type="text" id="todo">
+    <button id="btnAdd">추가</button>
+  </div>
+  <div id="list">
+    <div class="todo-item">
+      테스트용 1 입니다.
+    </div>
+    <div class="todo-item">
+      테스트용 2 입니다.
+    </div>
+  </div>
+  <script>
+    window.onload = function () {
+      const todo = document.querySelector("#todo");
+      const list = document.querySelector("#list");
+      //아이템 클릭시 내용을 출력해줌.
+      document.querySelectorAll(".todo-item").forEach(item => {
+        item.addEventListener("click", e => alert(e.target.innerHTML));
+      })
+      //버튼 클릭시 입력한 텍스트를 할일로 넣어주는 코드
+      document.querySelector("#btnAdd").addEventListener("click", e => {
+        if (todo.value != "") {
+          let div = document.createElement("div");
+          div.classList.add(".todo-item");
+          div.innerHTML = todo.value; //입력한 값을 넣어서 생성한다.
+          div.addEventListener("click", e => alert(e.target.innerHTML));
+          list.appendChild(div);
+          todo.value = ""; //공백으로 변경
+        }
+      });
+
+    }
+  </script>
 </body>
+
 </html>
